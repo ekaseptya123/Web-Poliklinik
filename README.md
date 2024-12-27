@@ -1,4 +1,5 @@
 # Web-Poliklinik
+Sistem ini adalah aplikasi untuk mengelola data poliklinik, termasuk pendaftaran pasien, pemeriksaan, dan manajemen jadwal dokter.
 # Database
 Database poliklinik
 Table structure for table daftar_poli
