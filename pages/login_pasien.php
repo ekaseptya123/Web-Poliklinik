@@ -3,24 +3,23 @@ session_start();
 require '../config/db.php'; // Pastikan jalur ini benar
 
 $error = '';
-$success = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $nama = $_POST['username']; // Menggunakan nama sebagai username
+    $alamat = $_POST['password']; // Menggunakan alamat sebagai password
 
-    // Mencari pasien di database berdasarkan username dan password
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username AND password = :password");
-    $stmt->execute(['username' => $username, 'password' => $password]);
+    // Mencari pasien di database berdasarkan nama dan alamat
+    $stmt = $pdo->prepare("SELECT * FROM pasien WHERE nama = :nama AND alamat = :alamat");
+    $stmt->execute(['nama' => $nama, 'alamat' => $alamat]);
     $pasien = $stmt->fetch();
 
     if ($pasien) {
-        // Set session dan redirect ke halaman dashboard atau halaman lain
-        $_SESSION['pasien_id'] = $pasien['id'];
+        // Set session dan redirect ke halaman dashboard
+        $_SESSION['id'] = $pasien['id'];
         header("Location: dashboard_pasien.php"); 
         exit();
     } else {
-       // $error = "Username atau password salah.";
+        $error = "Nama atau alamat salah."; // Tampilkan pesan kesalahan
     }
 }
 ?>
@@ -129,11 +128,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </header>
 
         <form method="POST" class="login-form">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
+        <input type="text" name="username" placeholder="Nama" required>
+            <input type="password" name="password" placeholder="Alamat" required>
             <button type="submit">Login</button>
             <?php if ($error): ?>
-                <p class="error-message"><?php echo $error; ?></p>
+                <p class="error-message"><?php echo htmlspecialchars($error); ?></p>
             <?php endif; ?>
         </form>
         <a href="register_pasien.php" class="register-link">Belum punya akun? Daftar</a>

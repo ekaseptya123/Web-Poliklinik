@@ -1,25 +1,30 @@
 <?php
 session_start();
+require '../config/db.php'; // Pastikan jalur ini benar
+
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil username dan password dari form
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $nama = $_POST['username']; // Menggunakan nama dokter
+    $alamat = $_POST['password']; // Menggunakan alamat dokter
 
-    // Ganti dengan logika autentikasi Anda
-    if ($username == 'Agha' && $password == 'dokter') {
-        // Simpan username ke dalam session
-        $_SESSION['username'] = $username;
+    // Query untuk memeriksa apakah dokter ada di database
+    $stmt = $pdo->prepare("SELECT * FROM dokter WHERE nama = :nama AND alamat = :alamat");
+    $stmt->execute([':nama' => $nama, ':alamat' => $alamat]);
+    $dokter = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($dokter) {
+        // Simpan ID dokter ke dalam session
+        $_SESSION['id'] = $dokter['id'];
         // Arahkan ke dashboard
         header("Location: dashboard_dokter.php");
         exit();
     } else {
-        $error = 'Username atau password salah!';
+        $error = 'Nama atau alamat salah!';
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="id">
@@ -114,15 +119,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </header>
 
         <form method="POST" class="login-form">
-            <input type="text" name="username" placeholder="Username Dokter" required>
-            <input type="password" name="password" placeholder="Password" required>
+            <input type="text" name="username" placeholder="Nama Dokter" required>
+            <input type="password" name="password" placeholder="Alamat" required>
             <button type="submit">Login</button>
             <?php if ($error): ?>
                 <p class="error-message"><?php echo $error; ?></p>
             <?php endif; ?>
         </form>
     </div>
-
-    
 </body>
 </html>
